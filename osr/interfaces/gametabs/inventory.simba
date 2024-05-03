@@ -222,6 +222,9 @@ function TRSInventory.ClickItem(item: TRSItem; option: String = ''): Boolean; ov
 var
   upText: String;
 begin
+  if not Self.Open() then
+  Exit;
+
   if Self.MouseItem(item) then
   begin
     upText := MainScreen.GetUpText();
@@ -242,26 +245,29 @@ begin
   end;
 end;
 
-function TRSInventory.ClickItem(item: TRSItem; options: TStringArray): Boolean; overload;
+function TRSInventory.ClickItem(item: TRSItem; option: String = ''): Boolean; override;
 var
   upText: String;
 begin
+  if not Self.Open() then
+  Exit;
+
   if Self.MouseItem(item) then
   begin
     upText := MainScreen.GetUpText();
 
-    if not options.Contains('>') and upText.Contains('>') then
+    if not option.Contains('>') and upText.Contains('>') then
     begin
       ChooseOption.Select('Cancel');
       Exit;
     end;
 
-    if (options = []) or upText.ContainsAny(options) then
+    if (option = '') or upText.Contains(option) then
     begin
       Antiban.BioClick(MOUSE_LEFT);
       Exit(True);
     end;
 
-    Result := ChooseOption.Select(options);
-  end
-end;
+    Result := ChooseOption.Select(option)
+  end;
+end;   
